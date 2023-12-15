@@ -7,18 +7,32 @@
 #include <getopt.h>
 #include <sys/types.h>
 
+int calibrationValue(char* s) {
+    int len = strlen(s) - 1;
+    int left = -1;
+    int right = -1;
+    int dig;
+    for(int i = 0; i < len; i++) {
+        dig = (int) s[i] - 48;
+        if(dig < 0 || dig > 9) {
+            continue;
+        }
 
-int calibrationValue(char* s, int len) {
-    int d;
-    printf("len = %d\n", len);
-    for(int i = 0; i < len; i++){
-
-        printf("%d", (int)s[i]);
-        // if((int) s[i] >= 48 && (int) s[i] > 58) {
-        //     printf("%c", s[i]);
-        // }
+        if(left == -1) {
+            left = dig;
+        } else {
+            right = dig;
+        }
     }
-    printf("\n");
+
+    if(left == -1) {
+        return 0;
+    }
+
+    int cal = left*10 + (right > -1 ? right : left);
+    printf("\tcal = %d\n", cal);
+
+    return cal;
 }
 
 int main(int argc, char *argv[]) {
@@ -34,10 +48,10 @@ int main(int argc, char *argv[]) {
     int cal = 0;
     while((read = getline(&line, &len, f)) != -1) {
         printf("%s", line);
-        cal += calibrationValue(line, len);
+        cal += calibrationValue(line);
     }
 
-    printf("Calibration value: %d\n", cal);
+    printf("\nCalibration value: %d\n", cal);
 
     printf("\nFinished.\n");
     return 0;
